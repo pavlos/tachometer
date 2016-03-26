@@ -7,6 +7,8 @@ defmodule Tachometer.Mixfile do
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
+     package: package,
+     description: description,
      deps: deps]
   end
 
@@ -14,7 +16,11 @@ defmodule Tachometer.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger]]
+    [applications: [:logger],
+     mod: {Tachometer, []},
+     registered: [Tachometer,
+                  Tachometer.SchedulerPoller,
+                  Tachometer.Supervisor]]
   end
 
   # Dependencies can be Hex packages:
@@ -29,4 +35,18 @@ defmodule Tachometer.Mixfile do
   defp deps do
     []
   end
+
+  defp description do
+    """
+    Scheduler instrumentation for BEAM in Elixir
+    """
+  end
+
+  defp package do
+    [# These are the default files included in the package
+     maintainers: ["Paul Hierommnimon"],
+     licenses: ["GNU GPLv3"],
+     links: %{"GitHub" => "https://github.com/pavlos/tachometer",
+              "Docs" => "https://github.com/pavlos/tachometer"}]
+    end
 end

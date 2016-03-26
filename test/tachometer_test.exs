@@ -1,11 +1,11 @@
 defmodule TachometerTest do
   use ExUnit.Case, async: false
-  alias Tachometer
 
-  @poll_interval 50
+  @poll_interval 20
   @wait_interval (@poll_interval * 3)
 
-  setup_all do
+  setup do
+    :timer.sleep 10
     {:ok, _pid} = Tachometer.start @poll_interval
     {:ok, []}
   end
@@ -49,8 +49,6 @@ defmodule TachometerTest do
   end
 
   test "update polling interval from long to short happens instantly" do
-    on_exit fn -> Tachometer.set_poll_interval @poll_interval  end
-
     Tachometer.set_poll_interval :infinity
 
     wait
@@ -86,12 +84,17 @@ defmodule TachometerTest do
     assert actual == expected
   end
 
+  test "stop tachometer" do
+    Tachometer.stop
+    assert {:noproc, _} = catch_exit(Tachometer.read)
+  end
+
   defp wait do
     :timer.sleep @wait_interval
   end
 
   defp test_listen do
-    (9500..9999) |>
+    (9500..10499) |>
     Enum.map(fn(port)->
       spawn_link fn ->
         {:ok, listenSocket} = :gen_tcp.listen(port, [{:active, true}, :binary])

@@ -1,0 +1,2 @@
+defmodule Tachometer do
+end

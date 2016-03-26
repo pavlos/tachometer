@@ -21,7 +21,7 @@ defmodule TachometerTest do
     wait
     reading = Tachometer.read
     expected_reading = 1/(:erlang.system_info(:schedulers))
-    reading |> assert_in_delta(expected_reading, 0.02)
+    reading |> assert_in_delta(expected_reading, 0.03)
   end
 
   test "peg several schedulers" do
@@ -33,7 +33,7 @@ defmodule TachometerTest do
         wait
         expected_reading = n/(:erlang.system_info(:schedulers))
         reading = Tachometer.read
-        reading |> assert_in_delta(expected_reading, 0.02)
+        reading |> assert_in_delta(expected_reading, 0.03)
       after
         pids |> Enum.map(fn(p)-> p |> Process.exit(:kill) end)
       end

@@ -29,7 +29,9 @@ defmodule Tachometer.SchedulerPoller do
       interval -> :ok
     end
     last = :erlang.statistics(:scheduler_wall_time)
-    __scheduler_usage(first, last) |> update_tachometer
+    spawn_link fn->
+      __scheduler_usage(first, last) |> update_tachometer
+    end
     poll(interval, last)
   end
 
@@ -39,8 +41,6 @@ defmodule Tachometer.SchedulerPoller do
   end
 
   def __scheduler_usage(first, last) do
-    # TODO: consider making this asynchronous so that it gets
-    #       factored into the statistics in the next loop
     {last_active,  last_total}  = reduce_sample(last)
     {first_active, first_total} = reduce_sample(first)
     (last_active - first_active)/(last_total - first_total)

@@ -1,7 +1,7 @@
 defmodule TachometerTest do
   use ExUnit.Case, async: false
 
-  @poll_interval 20
+  @poll_interval 30
   @wait_interval (@poll_interval * 3)
 
   setup do

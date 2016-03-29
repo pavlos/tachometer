@@ -1,4 +1,7 @@
 # Tachometer
+
+Easy to read, low overhead instrumentation for BEAM's schedulers in order to determine a system's capacity for efficiently performing additional work.
+
 <img align="right" src="http://i.imgur.com/HzxXvu9.png">
 
 ## Motivation

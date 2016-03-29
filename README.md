@@ -43,6 +43,10 @@ Tachometer polls the schedulers and returns their utilization ratio at any given
 `read/0` returns a float between `0` and `1` which represents fractional utilization of all schedulers.
 ```elixir
 iex(1)> Tachometer.read
+1.0680204528899838e-4
+iex(2)> spawn fn-> some_cpu_intensive_task() end
+#PID<0.604.0>
+iex(3)> Tachometer.read
 0.1250937703951221
 ```
 

@@ -10,7 +10,8 @@ defmodule Tachometer do
     end
   end
 
-  def start(poll_interval \\ 1000) do
+  def start(poll_interval \\ Application.get_env(:tachometer, :poll_interval)) do
+    poll_interval = poll_interval || 1000
     Logger.info  "Starting Tachometer with poll interval: #{inspect poll_interval}"
     Tachometer.Supervisor.start_link(poll_interval)
   end

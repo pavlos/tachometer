@@ -1,6 +1,14 @@
 # Tachometer
 <img align="right" src="http://i.imgur.com/HzxXvu9.png">
 
+## Motivation
+
+Using Unix's `rup`, `top` or Erlang's `:cpu_sup` module as a guage of BEAM's capacity
+to take on more work tends to be problematic for several reasons:
+
+* If BEAM is not the only process running on the system, `rup`, `top`, and `:cpu_sup` will report high load values even if BEAM is not doing any work.  If thr intention is to have the operating system give BEAM its fair share of cpu time in relation to other processes, backing off when total system load is high will not be effective.
+* Even if BEAM is the only process running on a system (such as in a container), BEAM's schedulers tend to [busy wait][1] and cause `rup`, `top`, and `:cpu_sup` to report artificially high loads.
+* They only work on Unix, and `:cpu_sup.util` doesn't work on Mac.
 
 ## Installation
   1. Add tachometer to your list of dependencies in `mix.exs`:
@@ -54,3 +62,6 @@ The default polling interval is 1000ms.  It can be overridden in your applicatio
 ```elixir
 config :tachometer, poll_interval: 2000
 ```
+
+## References
+[1]: http://dieswaytoofast.blogspot.com/2012/09/cpu-utilization-in-erlang-r15b02.html

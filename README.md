@@ -7,7 +7,7 @@ Using Unix's `rup`, `top` or Erlang's `:cpu_sup` module as a guage of BEAM's cap
 to take on more work tends to be problematic for several reasons:
 
 * If BEAM is not the only process running on the system, `rup`, `top`, and `:cpu_sup` will report high load values even if BEAM is not doing any work.  If the intention is to have the operating system give BEAM its fair share of CPU time in relation to other processes, having BEAM back off when total system load is high may result in it being under-scheduled on a busy system.
-* Even if BEAM is the only process running on a system (such as in a container), BEAM's schedulers tend to [busy wait][1] and cause `rup`, `top`, and `:cpu_sup` to report artificially high loads.
+* Even if BEAM is the only process running on a system (such as in a container), BEAM's schedulers tend to [busy wait][1] and cause `rup`, `top`, and `:cpu_sup` to report [artificially high loads][2].
 * They only work on Unix, and `:cpu_sup.util` doesn't work on Mac.
 
 ## Installation
@@ -64,5 +64,9 @@ config :tachometer, poll_interval: 2000
 ```
 
 ## References
-1. http://dieswaytoofast.blogspot.com/2012/09/cpu-utilization-in-erlang-r15b02.html
-[1]: http://dieswaytoofast.blogspot.com/2012/09/cpu-utilization-in-erlang-r15b02.html
+1. http://erlang.org/doc/man/erl.html#+sbwt
+[1]: http://erlang.org/doc/man/erl.html#+sbwt
+
+2. http://dieswaytoofast.blogspot.com/2012/09/cpu-utilization-in-erlang-r15b02.html
+[2]: http://dieswaytoofast.blogspot.com/2012/09/cpu-utilization-in-erlang-r15b02.html
+

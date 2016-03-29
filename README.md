@@ -78,6 +78,45 @@ The default polling interval is 1000ms.  It can be overridden in your applicatio
 config :tachometer, poll_interval: 2000
 ```
 
+## Overhead
+Even though Tachometer continuously polls the schedulers, it's pretty efficient.
+
+On my quad-core (8 logical core) MacBook Pro with 2.5GHz Intel Core i7, at the default polling interval of 1000ms, scheduler usage is around 0.014%.  Even with a 10ms polling interval, scheduler usage is only ~0.8%.
+
+```elixir
+Erlang/OTP 18 [erts-7.3] [source] [64-bit] [smp:8:8] [async-threads:10] [hipe] [kernel-poll:false] [dtrace]
+00:44:01.005 [info]  Starting Tachometer with poll interval: 1000
+Interactive Elixir (1.2.3) - press Ctrl+C to exit (type h() ENTER for help)
+iex(1)> Tachometer.read *100
+0.01577942092520329
+iex(2)> Tachometer.read *100
+0.01143933662334746
+iex(3)> Tachometer.read *100
+0.01078991240971616
+iex(4)> Tachometer.read *100
+0.01772561564617317
+iex(5)> Tachometer.set_poll_interval 100
+:ok
+iex(6)> Tachometer.read *100            
+0.13047732903573375
+iex(7)> Tachometer.read *100
+0.12765540161696975
+iex(8)> Tachometer.read *100
+0.07567538612106683
+iex(9)> Tachometer.read *100
+0.10016078050039413
+iex(10)> Tachometer.set_poll_interval 10  
+:ok
+iex(11)> Tachometer.read * 100
+0.5650368675971702
+iex(12)> Tachometer.read * 100
+0.8472015806170917
+iex(13)> Tachometer.read * 100
+0.8964118870133271
+iex(14)> Tachometer.read * 100
+0.9388679289295703
+```
+
 ## References
 1. http://erlang.org/doc/man/erl.html#+sbwt
 [1]: http://erlang.org/doc/man/erl.html#+sbwt

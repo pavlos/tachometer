@@ -6,9 +6,21 @@
 Using Unix's `rup`, `top` or Erlang's `:cpu_sup` module as a guage of BEAM's capacity
 to take on more work tends to be problematic for several reasons:
 
-* If BEAM is not the only process running on the system, `rup`, `top`, and `:cpu_sup` will report high load values even if BEAM is not doing any work.  If the intention is to have the operating system give BEAM its fair share of CPU time in relation to other processes, having BEAM back off when total system load is high may result in it being under-scheduled on a busy system.
+* If BEAM is not the only process running on the system, `rup`, `top`, and `:cpu_sup` will report high load values even if BEAM is not doing any work.  If the intention is to have the operating system give BEAM its fair share of CPU time in relation to other processes, having BEAM back off when total system load is high may result in it being under-scheduled on a busy system - it will be too "nice".
 * Even if BEAM is the only process running on a system (such as in a container), BEAM's schedulers tend to [busy wait][1] and cause `rup`, `top`, and `:cpu_sup` to report [artificially high loads][2].
 * They only work on Unix, and `:cpu_sup.util` doesn't work on Mac.
+
+Therefore, the best way to determine BEAM's capacity to take on work efficiently is to check it's scheduler usage through [`:erlang.statistics(:scheduler_wall_time)`][3] which returns the amount of time the schedulers have been active vs real time elapsed.
+
+A scheduler is considered `active` if it is not idle and doing any of the following:
+  - Executing process code
+  - Executing linked-in-driver or NIF code
+  - Executing built-in-functions, or any other runtime handling
+  - Garbage collecting
+  - Handling any other memory management
+
+Tachometer polls the schedulers and returns their utilization ratio at any given moment.
+  
 
 ## Installation
   1. Add tachometer to your list of dependencies in `mix.exs`:
@@ -70,3 +82,5 @@ config :tachometer, poll_interval: 2000
 2. http://dieswaytoofast.blogspot.com/2012/09/cpu-utilization-in-erlang-r15b02.html
 [2]: http://dieswaytoofast.blogspot.com/2012/09/cpu-utilization-in-erlang-r15b02.html
 
+3. http://erlang.org/doc/man/erlang.html#statistics-1
+[3]: http://erlang.org/doc/man/erlang.html#statistics-1

@@ -1,4 +1,6 @@
 # Tachometer
+<img align="right" src="http://i.imgur.com/HzxXvu9.png">
+
 
 ## Installation
   1. Add tachometer to your list of dependencies in `mix.exs`:

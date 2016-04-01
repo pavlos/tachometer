@@ -44,7 +44,7 @@ defmodule Tachometer.Mixfile do
 
   defp package do
     [# These are the default files included in the package
-     maintainers: ["Paul Hierommnimon"],
+     maintainers: ["Paul Hieromnimon"],
      licenses: ["GNU GPLv3"],
      links: %{"GitHub" => "https://github.com/pavlos/tachometer",
               "Docs" => "https://github.com/pavlos/tachometer"}]

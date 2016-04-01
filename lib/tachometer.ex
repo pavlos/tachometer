@@ -38,6 +38,14 @@ defmodule Tachometer do
     Agent.get __MODULE__, fn(state)-> state end
   end
 
+  def read(:all) do
+    :rpc.multicall __MODULE__, :read, []
+  end
+
+  def read(node, timeout \\ 1) do
+    :rpc.call node, __MODULE__, :read, [], timeout
+  end
+
   def safe_set_poll_interval(interval) do
     try do
       set_poll_interval(interval)
@@ -50,6 +58,10 @@ defmodule Tachometer do
 
   def set_poll_interval(interval) do
     Tachometer.SchedulerPoller.set_poll_interval(interval)
+  end
+
+  def set_poll_interval(node, interval, timeout \\ 1) do
+    :rpc.call node, Tachometer.SchedulerPoller, :set_poll_interval, [interval], timeout
   end
 
 end

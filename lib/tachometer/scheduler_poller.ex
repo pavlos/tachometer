@@ -35,6 +35,12 @@ defmodule Tachometer.SchedulerPoller do
     poll(interval, last)
   end
 
+  def below_max? do
+    first = :erlang.statistics(:scheduler_wall_time)
+    last = :erlang.statistics(:scheduler_wall_time)
+    __scheduler_usage(first, last) < 1.0
+  end
+
   def set_poll_interval(interval) do
     send __MODULE__, {:set_poll_interval, interval}
     :ok

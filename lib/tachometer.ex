@@ -52,4 +52,8 @@ defmodule Tachometer do
     Tachometer.SchedulerPoller.set_poll_interval(interval)
   end
 
+  def below_max? do
+    Tachometer.SchedulerPoller.below_max?
+  end
+
 end

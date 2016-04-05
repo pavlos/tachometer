@@ -89,6 +89,24 @@ defmodule TachometerTest do
     assert {:noproc, _} = catch_exit(Tachometer.read)
   end
 
+  test "below_max? is true until a job is running on each scheduler" do
+    total_schedulers = :erlang.system_info :schedulers
+
+    for n <- 1..total_schedulers do
+      pids = for _ <- 1..n, do: spawn fn-> fib_calc(100) end
+      try do
+        :timer.sleep 1
+        if n < total_schedulers do
+          assert Tachometer.below_max?
+        else
+          refute Tachometer.below_max?
+        end
+      after
+        pids |> Enum.map(fn(p)-> p |> Process.exit(:kill) end)
+      end
+    end
+  end
+
   defp wait do
     :timer.sleep @wait_interval
   end
@@ -102,6 +120,7 @@ defmodule TachometerTest do
       end
     end)
   end
+
 
   # super inefficient, on purpose
   defp fib_calc(0), do: 0

@@ -100,21 +100,21 @@ scheduler usage is around 0.014%.  Even with a 10ms polling interval, scheduler 
 Erlang/OTP 18 [erts-7.3] [source] [64-bit] [smp:8:8] [async-threads:10] [hipe] [kernel-poll:false] [dtrace]
 00:44:01.005 [info]  Starting Tachometer with poll interval: 1000
 Interactive Elixir (1.2.3) - press Ctrl+C to exit (type h() ENTER for help)
-iex(1)> Tachometer.read *100
+iex(1)> Tachometer.read * 100
 0.01577942092520329
-iex(2)> Tachometer.read *100
+iex(2)> Tachometer.read * 100
 0.01143933662334746
-iex(3)> Tachometer.read *100
+iex(3)> Tachometer.read * 100
 0.01078991240971616
-iex(4)> Tachometer.read *100
+iex(4)> Tachometer.read * 100
 0.01772561564617317
 iex(5)> Tachometer.set_poll_interval 100
 :ok
-iex(6)> Tachometer.read *100            
+iex(6)> Tachometer.read * 100            
 0.13047732903573375
-iex(7)> Tachometer.read *100
+iex(7)> Tachometer.read * 100
 0.12765540161696975
-iex(8)> Tachometer.read *100
+iex(8)> Tachometer.read * 100
 0.07567538612106683
 iex(9)> Tachometer.read *100
 0.10016078050039413

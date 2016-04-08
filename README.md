@@ -116,7 +116,7 @@ iex(7)> Tachometer.read * 100
 0.12765540161696975
 iex(8)> Tachometer.read * 100
 0.07567538612106683
-iex(9)> Tachometer.read *100
+iex(9)> Tachometer.read * 100
 0.10016078050039413
 iex(10)> Tachometer.set_poll_interval 10  
 :ok

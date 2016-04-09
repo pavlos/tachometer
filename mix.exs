@@ -20,7 +20,8 @@ defmodule Tachometer.Mixfile do
      mod: {Tachometer, []},
      registered: [Tachometer,
                   Tachometer.SchedulerPoller,
-                  Tachometer.Supervisor]]
+                  Tachometer.Supervisor,
+                  Tachometer.SchedulerUsageEventManager]]
   end
 
   # Dependencies can be Hex packages:

@@ -20,7 +20,7 @@ defmodule Tachometer do
     Tachometer.Supervisor.stop
   end
 
-  def start_link do
+  def start_link do #TODO :move this agent to its own modeule
     {:ok, _pid} = Agent.start_link fn -> 0 end, name: __MODULE__
   end
 
@@ -54,6 +54,10 @@ defmodule Tachometer do
 
   def below_max? do
     Tachometer.SchedulerPoller.below_max?
+  end
+
+  def add_scheduler_usage_handler(handler_module) do
+    Tachometer.SchedulerUsageEventManager.add_handler handler_module
   end
 
 end

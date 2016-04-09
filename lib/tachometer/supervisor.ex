@@ -4,6 +4,7 @@ defmodule Tachometer.Supervisor do
   def start_link(poll_interval) do
     children = [
       worker(Tachometer, []),
+      worker(Tachometer.SchedulerUsageEventManager, []),  #todo re-evaluate rest-for-one strategy, maybe use :one_for_all
       worker(Tachometer.SchedulerPoller, [poll_interval])
     ]
 

@@ -11,4 +11,8 @@ defmodule Tachometer.SchedulerUsageEventManager do
     GenEvent.add_handler __MODULE__, handler, nil
   end
 
+  def delete_handler(handler) do
+    GenEvent.remove_handler __MODULE__, handler, nil
+  end
+
 end

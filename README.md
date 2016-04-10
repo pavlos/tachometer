@@ -64,6 +64,7 @@ __Tachometer polls the schedulers and returns their utilization ratio during the
 ## Usage
 
 ### Obtaining Readings
+
 Tachometer polls the schedulers and returns their utilization ratio during the last poll interval.
 
 `read/0` returns a float between `0` and `1` which represents fractional utilization of all schedulers during the last `poll_interval`.
@@ -76,7 +77,7 @@ iex(3)> Tachometer.read
 0.1250937703951221
 ```
 
-`below_max?` takes an snapshot of scheduler usage to determine if schedulers have any remaning capacity for work.  __It is instantaneous and independent of the `poll_interval` at which `read` operates.__
+`below_max?/0` takes an snapshot of scheduler usage to determine if schedulers have any remaning capacity for work.  __It is instantaneous and independent of the `poll_interval` at which `read/0` operates.__
 
 ```elixir
 iex(1)> Tachometer.below_max?

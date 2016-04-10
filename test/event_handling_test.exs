@@ -42,17 +42,14 @@ defmodule EventHandlingTest do
     assert_receive :scheduler_usage_update_received_by_TestSchedulerUsageEventHandler, @receive_wait
     :ok = Tachometer.remove_scheduler_usage_handler handler_name
     assert [] == Tachometer.SchedulerUsageEventManager.which_handlers
-    refute_receive :scheduler_usage_update_received_by_TestSchedulerUsageEventHandler, @receive_wait
+    refute_receive :scheduler_usage_update_received_by_TestSchedulerUsageEventHandler, @receive_wait * 3
   end
 
   test "that handlers can survive an event manager crash" do
     capture_log fn ->
       {:ok, _handler} = create_messaging_handler(TestHandlerManagerKill)
-      pid = Process.whereis(Tachometer.SchedulerUsageEventManager)
 
-      # crash the event manager
-      Process.exit(pid, :kill)
-      :timer.sleep 10
+      assert kill_event_manager
 
       assert [TestHandlerManagerKill] == Tachometer.SchedulerUsageEventManager.which_handlers
       assert_receive :scheduler_usage_update_received_by_TestSchedulerUsageEventHandler, @receive_wait
@@ -73,10 +70,33 @@ defmodule EventHandlingTest do
     assert_receive :scheduler_usage_update_received_by_TestSchedulerUsageEventHandler, @receive_wait
   end
 
+  test "removed handlers don't come back after supervisor restarts event manager" do
+    {:ok, _handler} = create_messaging_handler(TestHandlerRemove)
+    :ok = Tachometer.remove_scheduler_usage_handler TestHandlerRemove
+    assert [] == Tachometer.SchedulerUsageEventManager.which_handlers
+
+    assert kill_event_manager
+
+    assert Tachometer.SchedulerUsageEventManager |> Process.whereis |> Process.alive?
+    assert [] == Tachometer.SchedulerUsageEventManager.which_handlers
+    refute_receive :scheduler_usage_update_received_by_TestSchedulerUsageEventHandler, @receive_wait * 3
+  end
+
   defp create_messaging_handler(name) do
     {:ok, _handler} = self |>
     TestHandlerMacro.create_test_handler(name) |>
     Tachometer.add_scheduler_usage_handler
+  end
+
+  defp kill_event_manager do
+    original_pid = Process.whereis(Tachometer.SchedulerUsageEventManager)
+
+    # crash the event manager
+    Process.exit(original_pid, :brutal_kill)
+    :timer.sleep 1
+
+    new_pid = Process.whereis(Tachometer.SchedulerUsageEventManager)
+    original_pid != new_pid
   end
 
   defp flush do

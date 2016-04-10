@@ -11,6 +11,11 @@ defmodule Tachometer.Supervisor do
     Supervisor.start_link(children, strategy: :rest_for_one, name: __MODULE__)
   end
 
+  def supervise_event_handler(manager, handler_module) do
+    watcher_spec = worker(Watcher, [Tachometer.SchedulerUsageEventManager, handler_module, []])
+    Supervisor.start_child __MODULE__, watcher_spec
+  end
+
   def stop do
     Supervisor.stop(__MODULE__, :normal)
   end

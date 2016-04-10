@@ -20,19 +20,16 @@ defmodule EventHandlingTest do
 
   test "handler receives correct scheduler usage" do
     defmodule TestHandlerUsage do
-      use GenEvent
+      use Tachometer.SchedulerUsageEventHandler
 
-      def handle_event({:scheduler_usage_update, usage}, state) do
+      def handle_scheduler_usage_update(usage) do
         assert usage == Tachometer.read()
-        {:ok, state}
       end
     end
 
     SchedulerUsageEventManager.add_handler(TestHandlerUsage)
     :timer.sleep @poll_interval * 3
   end
-
-  #test "every time scheduler usage is updated an event is emitted"
 
   test "event handler gets called" do
     self |>

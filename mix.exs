@@ -34,7 +34,7 @@ defmodule Tachometer.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    []
+    [{:watcher, "~> 1.0.0"}]
   end
 
   defp description do

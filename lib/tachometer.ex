@@ -57,7 +57,7 @@ defmodule Tachometer do
   end
 
   def add_scheduler_usage_handler(handler_module) do
-    Tachometer.SchedulerUsageEventManager.add_handler handler_module
+    Tachometer.Supervisor.supervise_event_handler Tachometer.SchedulerUsageEventManager, handler_module
   end
 
 end

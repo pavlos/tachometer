@@ -7,14 +7,6 @@ defmodule Tachometer.SchedulerUsageEventManager do
     GenEvent.notify __MODULE__, {:scheduler_usage_update, scheduler_usage}
   end
 
-  def add_handler(handler) do
-    GenEvent.add_handler __MODULE__, handler, nil
-  end
-
-  def delete_handler(handler) do
-    GenEvent.remove_handler __MODULE__, handler, nil
-  end
-
   def which_handlers do
     GenEvent.which_handlers __MODULE__
   end

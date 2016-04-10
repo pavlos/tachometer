@@ -60,4 +60,8 @@ defmodule Tachometer do
     Tachometer.Supervisor.supervise_event_handler Tachometer.SchedulerUsageEventManager, handler_module
   end
 
+  def remove_scheduler_usage_handler(handler_module) do
+    Tachometer.Supervisor.terminate_event_handler handler_module
+    Tachometer.Supervisor.delete_event_handler handler_module
+  end
 end

@@ -12,8 +12,16 @@ defmodule Tachometer.Supervisor do
   end
 
   def supervise_event_handler(manager, handler_module) do
-    watcher_spec = worker(Watcher, [Tachometer.SchedulerUsageEventManager, handler_module, []])
+    watcher_spec = worker(Watcher, [manager, handler_module, []], [id: handler_module])
     Supervisor.start_child __MODULE__, watcher_spec
+  end
+
+  def terminate_event_handler(handler_module) do
+    Supervisor.terminate_child __MODULE__, handler_module
+  end
+
+  def delete_event_handler(handler_module) do
+    Supervisor.delete_child __MODULE__, handler_module
   end
 
   def stop do

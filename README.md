@@ -44,7 +44,7 @@ A scheduler is considered `active` if it is not idle and doing any of the follow
   - Garbage collecting
   - Handling any other memory management
 
-Tachometer polls the schedulers and returns their utilization ratio at any given moment.
+__Tachometer polls the schedulers and returns their utilization ratio during the last poll interval.__
   
 
 ## Installation
@@ -62,7 +62,9 @@ Tachometer polls the schedulers and returns their utilization ratio at any given
 
 ## Usage
 
-`read/0` returns a float between `0` and `1` which represents fractional utilization of all schedulers.
+Tachometer polls the schedulers and returns their utilization ratio during the last poll interval.
+
+`read/0` returns a float between `0` and `1` which represents fractional utilization of all schedulers during the last `poll_interval`.
 ```elixir
 iex(1)> Tachometer.read
 1.0680204528899838e-4
@@ -70,6 +72,13 @@ iex(2)> spawn fn-> some_cpu_intensive_task() end
 #PID<0.604.0>
 iex(3)> Tachometer.read
 0.1250937703951221
+```
+
+`below_max?` takes an snapshot of scheduler usage to determine if schedulers have any remaning capacity for work.  __It is instantaneous and independent of the `poll_interval` at which `read` operates.__
+
+```elixir
+iex(1)> Tachometer.below_max?
+true
 ```
 
 ### Setting Poll Interval at Runtime

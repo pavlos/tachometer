@@ -1,4 +1,4 @@
-defmodule Tachometer.SchedulerUsageEventManager do
+defmodule Tachometer.SchedulerUsageEvent.Manager do
   def start_link do
     GenEvent.start_link name: __MODULE__
   end

@@ -1,6 +1,6 @@
 defmodule EventHandlingTest do
   use ExUnit.Case, async: false
-  alias Tachometer.SchedulerUsageEventManager
+  alias Tachometer.SchedulerUsageEvent.Manager
   require TestHandlerMacro
   import ExUnit.CaptureLog
 
@@ -16,7 +16,7 @@ defmodule EventHandlingTest do
 
   setup do
     on_exit fn ->
-      SchedulerUsageEventManager.which_handlers |>
+      Manager.which_handlers |>
       Enum.map(&Tachometer.remove_scheduler_usage_handler/1)
       flush()
     end
@@ -24,7 +24,7 @@ defmodule EventHandlingTest do
 
   test "handler receives correct scheduler usage" do
     defmodule TestHandlerUsage do
-      use Tachometer.SchedulerUsageEventHandler
+      use Tachometer.SchedulerUsageEvent.Handler
 
       def handle_scheduler_usage_update(usage) do
         assert usage == Tachometer.read()
@@ -41,7 +41,7 @@ defmodule EventHandlingTest do
 
     assert_receive :scheduler_usage_update_received_by_TestSchedulerUsageEventHandler, @receive_wait
     :ok = Tachometer.remove_scheduler_usage_handler handler_name
-    assert [] == Tachometer.SchedulerUsageEventManager.which_handlers
+    assert [] == Manager.which_handlers
     refute_receive :scheduler_usage_update_received_by_TestSchedulerUsageEventHandler, @receive_wait * 3
   end
 
@@ -51,21 +51,21 @@ defmodule EventHandlingTest do
 
       assert kill_event_manager
 
-      assert [TestHandlerManagerKill] == Tachometer.SchedulerUsageEventManager.which_handlers
+      assert [TestHandlerManagerKill] == Manager.which_handlers
       assert_receive :scheduler_usage_update_received_by_TestSchedulerUsageEventHandler, @receive_wait
     end
   end
 
   test "that handlers can survive a bad notify" do
     {:ok, _handler} = create_messaging_handler(TestHandlerBadNotify)
-    GenEvent.notify(Tachometer.SchedulerUsageEventManager, :bogus_event)
+    GenEvent.notify(Manager, :bogus_event)
     flush()
     assert_receive :scheduler_usage_update_received_by_TestSchedulerUsageEventHandler, @receive_wait
   end
 
   test "that handlers can survive a bad call" do
     {:ok, _handler} = create_messaging_handler(TestHandlerBadCall)
-    GenEvent.call(Tachometer.SchedulerUsageEventManager, TestHandlerBadCall, :bogus_call)
+    GenEvent.call(Manager, TestHandlerBadCall, :bogus_call)
     flush()
     assert_receive :scheduler_usage_update_received_by_TestSchedulerUsageEventHandler, @receive_wait
   end
@@ -73,12 +73,12 @@ defmodule EventHandlingTest do
   test "removed handlers don't come back after supervisor restarts event manager" do
     {:ok, _handler} = create_messaging_handler(TestHandlerRemove)
     :ok = Tachometer.remove_scheduler_usage_handler TestHandlerRemove
-    assert [] == Tachometer.SchedulerUsageEventManager.which_handlers
+    assert [] == Manager.which_handlers
 
     assert kill_event_manager
 
-    assert Tachometer.SchedulerUsageEventManager |> Process.whereis |> Process.alive?
-    assert [] == Tachometer.SchedulerUsageEventManager.which_handlers
+    assert Manager |> Process.whereis |> Process.alive?
+    assert [] == Manager.which_handlers
     refute_receive :scheduler_usage_update_received_by_TestSchedulerUsageEventHandler, @receive_wait * 3
   end
 
@@ -89,13 +89,13 @@ defmodule EventHandlingTest do
   end
 
   defp kill_event_manager do
-    original_pid = Process.whereis(Tachometer.SchedulerUsageEventManager)
+    original_pid = Process.whereis(Manager)
 
     # crash the event manager
     Process.exit(original_pid, :brutal_kill)
     :timer.sleep 1
 
-    new_pid = Process.whereis(Tachometer.SchedulerUsageEventManager)
+    new_pid = Process.whereis(Manager)
     original_pid != new_pid
   end
 

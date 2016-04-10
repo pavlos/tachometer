@@ -1,9 +1,9 @@
-defmodule Tachometer.SchedulerUsageEventHandler do
+defmodule Tachometer.SchedulerUsageEvent.Handler do
   @callback handle_scheduler_usage_update(number) :: any
 
   defmacro __using__(_opts) do
     quote do
-      @behaviour Tachometer.SchedulerUsageEventHandler
+      @behaviour Tachometer.SchedulerUsageEvent.Handler
       use GenEvent
       require Logger
 

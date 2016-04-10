@@ -58,7 +58,7 @@ defmodule Tachometer.SchedulerPoller do
   end
 
   defp send_event(usage) do
-    Tachometer.SchedulerUsageEventManager.notify(usage)
+    Tachometer.SchedulerUsageEvent.Manager.notify(usage)
   end
 
   defp reduce_sample(sample) do

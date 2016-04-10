@@ -21,7 +21,7 @@ defmodule Tachometer.Mixfile do
      registered: [Tachometer,
                   Tachometer.SchedulerPoller,
                   Tachometer.Supervisor,
-                  Tachometer.SchedulerUsageEventManager]]
+                  Tachometer.SchedulerUsageEvent.Manager]]
   end
 
   # Dependencies can be Hex packages:

@@ -11,6 +11,7 @@ efficiently performing additional work.
 	- [Motivation](#motivation)
 	- [Installation](#installation)
 	- [Usage](#usage)
+		- [Obtaining Readings](#obtaining-readings)
 		- [Setting Poll Interval at Runtime](#setting-poll-interval-at-runtime)
 		- [Stopping](#stopping)
 		- [Manually Starting](#manually-starting)
@@ -62,6 +63,7 @@ __Tachometer polls the schedulers and returns their utilization ratio during the
 
 ## Usage
 
+### Obtaining Readings
 Tachometer polls the schedulers and returns their utilization ratio during the last poll interval.
 
 `read/0` returns a float between `0` and `1` which represents fractional utilization of all schedulers during the last `poll_interval`.

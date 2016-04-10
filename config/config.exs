@@ -29,4 +29,4 @@ use Mix.Config
 #
 #     import_config "#{Mix.env}.exs"
 
-config :tachometer, poll_interval: 5000
+config :tachometer, poll_interval: 1000

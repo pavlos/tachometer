@@ -26,6 +26,8 @@ defmodule Tachometer.SchedulerUsageEvent.Handler do
         {:ok, state, state}
       end
 
+      defoverridable [handle_event: 2, handle_call: 2]
+
     end
   end
 end

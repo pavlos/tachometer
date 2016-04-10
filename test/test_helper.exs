@@ -7,20 +7,19 @@ end
 
 defmodule TestHandlerMacro do
 
- defmacro create_test_handler(test_pid) do
-    quote bind_quoted: [test_pid: test_pid] do
+  def create_test_handler(test_pid, name) do
 
-      defmodule TestSchedulerUsageEventHandler do
-        use GenEvent
-
+    contents = quote bind_quoted: [test_pid: test_pid] do
+      use GenEvent
+      def handle_event({:scheduler_usage_update, _usage}, state) do
         #TODO: maybe just modify SchedulerUsageEventManager.add_handler to pass in test_pid as arg
-        def handle_event({:scheduler_usage_update, _usage}, state) do
-          send unquote(test_pid), :scheduler_usage_update_received_by_TestSchedulerUsageEventHandler
-          {:ok, state}
-        end
+        send unquote(test_pid), :scheduler_usage_update_received_by_TestSchedulerUsageEventHandler
+        {:ok, state}
       end
-
     end
+
+    Module.create(name, contents, Macro.Env.location(__ENV__))
+    name
   end
 
 end

@@ -11,23 +11,34 @@ defmodule EventHandlingTest do
     {:ok, []}
   end
 
-  test "handler receives correct scheduler usage" do
-
+  setup do
+    on_exit fn ->
+      SchedulerUsageEventManager.which_handlers |>
+      Enum.map(&SchedulerUsageEventManager.delete_handler/1)
+    end
   end
 
-  test "every time scheduler usage is updated an event is emitted"
+  test "handler receives correct scheduler usage" do
+    defmodule TestHandlerUsage do
+      use GenEvent
 
-  test "event handler gets called" do
-    self |> TestHandlerMacro.create_test_handler
-
-    SchedulerUsageEventManager.add_handler(TestSchedulerUsageEventHandler)
-    on_exit fn ->
-      try do
-        SchedulerUsageEventManager.delete_handler(TestSchedulerUsageEventHandler)
-      catch
-        :exit, _ -> :ok
+      def handle_event({:scheduler_usage_update, usage}, state) do
+        assert usage == Tachometer.read()
+        {:ok, state}
       end
     end
+
+    SchedulerUsageEventManager.add_handler(TestHandlerUsage)
+    :timer.sleep @poll_interval * 3
+  end
+
+  #test "every time scheduler usage is updated an event is emitted"
+
+  test "event handler gets called" do
+    self |>
+    TestHandlerMacro.create_test_handler(TestHandlerCalled) |>
+    SchedulerUsageEventManager.add_handler
+
     assert_receive :scheduler_usage_update_received_by_TestSchedulerUsageEventHandler, @poll_interval + 5
     SchedulerUsageEventManager.delete_handler(TestSchedulerUsageEventHandler)
     refute_receive :event_reveived, @poll_interval * 3

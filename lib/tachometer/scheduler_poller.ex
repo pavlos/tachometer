@@ -30,7 +30,7 @@ defmodule Tachometer.SchedulerPoller do
     end
     last = :erlang.statistics(:scheduler_wall_time)
     spawn_link fn->
-      __scheduler_usage(first, last) |> update_tachometer
+      __scheduler_usage(first, last) |> update_tachometer |> send_event
     end
     poll(interval, last)
   end
@@ -54,6 +54,11 @@ defmodule Tachometer.SchedulerPoller do
 
   defp update_tachometer(usage) do
     Agent.cast Tachometer, fn(_old_usage)-> usage end
+    usage
+  end
+
+  defp send_event(usage) do
+    Tachometer.SchedulerUsageEvent.Manager.notify(usage)
   end
 
   defp reduce_sample(sample) do

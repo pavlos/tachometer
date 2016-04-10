@@ -58,6 +58,7 @@ iex(3)> Tachometer.read
 0.1250937703951221
 ```
 
+### Setting Poll Interval at Runtime
 Tachometer's default polling interval is 1000ms.  
 `set_poll_interval/1` can be used to change the polling interval.
 ```elixir
@@ -66,12 +67,17 @@ iex(2)> Tachometer.set_poll_interval 500
 :ok
 ```
 
+### Stopping
 Use `stop/0` to stop Tachometer:
 ```elixir
 iex(3)> Tachometer.stop                  
 :ok
 21:54:02.679 [info]  Application tachometer exited: normal
 ```
+
+### Manually Starting
+OTP will automatically start Tachometer if you add it to your `applications` list in `mix.exs`.  
+If you wish to manually start Tachometer, do the following:
 
 `start/1` accepts `poll_interval` in milliseconds as an optional parameter.  
 Defaults to `Application.get_env(:tachometer, :poll_interval)` if set, otherwise 1000ms.
@@ -80,6 +86,34 @@ Defaults to `Application.get_env(:tachometer, :poll_interval)` if set, otherwise
 iex(4)> Tachometer.start 2000
 22:07:34.147 [debug] Starting Tachometer with poll interval: 2000
 {:ok, #PID<0.115.0>}
+```
+
+### Events
+Tachometer uses `GenEvent` to emit a `:scheduler_usage_event` every `poll_interval`
+
+You can write an event handler as follows:
+
+```elixir
+defmodule MyEventHandler do
+  use Tachometer.SchedulerUsageEvent.Handler
+
+  def handle_scheduler_usage_update(usage) do
+    # Do something!
+  end
+end
+```
+Be sure to `use Tachometer.SchedulerUsageEvent.Handler` and implement `handle_scheduler_usage_update/1` in your module.
+
+To activate your event handler:
+```elixir
+ {:ok, _handler} = Tachometer.add_scheduler_usage_handler(MyEventHandler)
+```
+
+This will put the event handler in Tachometer's supervision tree.  You do not need to monitor or supervise event handlers - Tachometer does this using `Watcher` and they will be automatically re-added if anything crashes.
+
+To deactive your event handler:
+```elixir
+  :ok = Tachometer.remove_scheduler_usage_handler(handler_module)
 ```
 
 ## Configuration

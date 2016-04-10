@@ -5,6 +5,20 @@
 Easy to read, low overhead instrumentation for BEAM's schedulers in order to determine a system's capacity for 
 efficiently performing additional work.
 
+**Table of Contents**
+
+- [Tachometer](#)
+	- [Motivation](#motivation)
+	- [Installation](#installation)
+	- [Usage](#usage)
+		- [Setting Poll Interval at Runtime](#setting-poll-interval-at-runtime)
+		- [Stopping](#stopping)
+		- [Manually Starting](#manually-starting)
+		- [Events](#events)
+	- [Configuration](#configuration)
+	- [Overhead](#overhead)
+	- [References](#references)
+
 ## Motivation
 
 Using Unix's `rup`, `top` or Erlang's `:cpu_sup` module as a guage of BEAM's capacity
